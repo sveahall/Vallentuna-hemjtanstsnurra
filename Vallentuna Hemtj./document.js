@@ -37,11 +37,12 @@ let currentStepIndex = 0;
 
 // ======== HUVUDKOD ========
 document.addEventListener('DOMContentLoaded', function() {
-    // Bind main calculation button event listener
-    document.getElementById('beraknaBtn').addEventListener('click', function() {
-        if (validateInput()) {
-            calculateAvgift();
-        } else {
+  showError(''); // clear any previous error
+  // Bind main calculation button event listener
+  document.getElementById('beraknaBtn').addEventListener('click', function() {
+      if (validateInput()) {
+          calculateAvgift();
+      } else {
             // Validation failed, user is already notified
         }
     });
@@ -88,6 +89,23 @@ document.addEventListener('DOMContentLoaded', function() {
             generatePDF();
         }
     });
+
+    const resetBtn = document.getElementById('resetFormButton');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', resetForm);
+    }
+
+    // Separata klick för pdf/print som fallback
+    const saveButton = document.getElementById('saveButton');
+    const printButton = document.getElementById('printButton');
+    if (saveButton) {
+      saveButton.addEventListener('click', generatePDF);
+    }
+    if (printButton) {
+      printButton.addEventListener('click', () => window.print());
+    }
+
+    initInfoToggles();
 });
 
 function bindEventListeners(fieldName, handler) {
@@ -106,6 +124,43 @@ function toggleAntalMatlådorPerVecka(e) {
   AntalMatlådorPerVeckaContainer.style.display = e.target.value === 'ja' ? 'block' : 'none';
 }
 
+function initInfoToggles() {
+  const icons = document.querySelectorAll('.info-icon');
+  icons.forEach(icon => {
+    icon.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const isActive = icon.classList.contains('active');
+      icons.forEach(i => i.classList.remove('active'));
+      if (!isActive) {
+        icon.classList.add('active');
+      }
+    });
+    icon.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        icon.click();
+      }
+    });
+  });
+  document.addEventListener('click', (event) => {
+    if (!event.target.classList.contains('info-icon')) {
+      icons.forEach(i => i.classList.remove('active'));
+    }
+  });
+}
+
+function resetForm() {
+  const form = document.getElementById('avgiftsFormular');
+  form.reset();
+  showError('');
+  updateFormFields();
+  uppdateraBoendeform();
+  toggleAntalMatlådorPerVecka({ target: { value: 'nej' } });
+  toggleYtaForEl({ target: { value: 'ja' } });
+  showStep(0);
+}
+
 function toggleFormAndResults() {
   const avgiftsFormular = document.getElementById('avgiftsFormular');
   const resultsSection = document.getElementById('resultsSection');
@@ -117,6 +172,7 @@ function toggleFormAndResults() {
   if (resultsSection.style.display === 'block') {
     window.scrollTo({top: 0, behavior: 'smooth'});
   } else {
+    showError('');
     showStep(0);
   }
 }
@@ -130,6 +186,7 @@ function initStepper() {
       const currentStep = parseInt(button.closest('.form-step').dataset.step, 10);
       const nextStep = parseInt(button.dataset.next, 10);
       if (validateStep(currentStep)) {
+        showError('');
         showStep(nextStep);
       }
     });
@@ -157,13 +214,30 @@ function showStep(stepIndex) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function showError(message, focusSelector) {
+  const errorBox = document.getElementById('formError');
+  if (!errorBox) return;
+  if (message) {
+    errorBox.textContent = message;
+    errorBox.style.display = 'block';
+    errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (focusSelector) {
+      const el = document.querySelector(focusSelector);
+      if (el) el.focus({ preventScroll: true });
+    }
+  } else {
+    errorBox.textContent = '';
+    errorBox.style.display = 'none';
+  }
+}
+
 function validateStep(stepIndex) {
   const civilStatus = document.querySelector('input[name="civilstand"]:checked')?.value;
 
   switch(stepIndex) {
     case 0: {
       if (!civilStatus) {
-        alert('Välj civilstånd för att fortsätta.');
+        showError('Välj civilstånd för att fortsätta.', 'input[name="civilstand"]');
         return false;
       }
       return true;
@@ -171,13 +245,13 @@ function validateStep(stepIndex) {
     case 1: {
       const ageChecked = document.querySelector('input[name="alder"]:checked');
       if (!ageChecked) {
-        alert('Välj åldersgrupp för att fortsätta.');
+        showError('Välj åldersgrupp för att fortsätta.', 'input[name="alder"]');
         return false;
       }
       if (civilStatus === 'gift') {
         const partnerAgeSelected = document.querySelector('input[name="alder_partner"]:checked');
         if (!partnerAgeSelected) {
-          alert('Välj åldersgrupp för partner för att fortsätta.');
+          showError('Välj åldersgrupp för partner för att fortsätta.', 'input[name="alder_partner"]');
           return false;
         }
       }
@@ -186,24 +260,24 @@ function validateStep(stepIndex) {
     case 2: {
       const boendeformChecked = document.querySelector('input[name="boendeform"]:checked');
       if (!boendeformChecked) {
-        alert('Välj boendeform för att fortsätta.');
+        showError('Välj boendeform för att fortsätta.', 'input[name="boendeform"]');
         return false;
       }
       if (boendeformChecked.value === 'hyres/bostadsratt') {
         const hyraPerManad = document.getElementById('hyraPerManad').value;
         const hushallselValue = document.querySelector('input[name="hushallsel"]:checked');
         if (!hyraPerManad) {
-          alert('Fyll i hyra/avgift per månad.');
+          showError('Fyll i hyra/avgift per månad.', '#hyraPerManad');
           return false;
         }
         if (!hushallselValue) {
-          alert('Ange om hushållsel ingår.');
+          showError('Ange om hushållsel ingår.', 'input[name="hushallsel"]');
           return false;
         }
         if (hushallselValue.value === 'nej') {
           const ytaForEl = document.getElementById('ytaForEl').value;
           if (!ytaForEl) {
-            alert('Fyll i yta i kvm för elberäkning.');
+            showError('Fyll i yta i kvm för elberäkning.', '#ytaForEl');
             return false;
           }
         }
@@ -212,7 +286,7 @@ function validateStep(stepIndex) {
         const yta = document.getElementById('yta').value;
         const ranteutgiftPerAr = document.getElementById('ranteutgiftPerAr').value;
         if (!taxeringsvarde || !yta || !ranteutgiftPerAr) {
-          alert('Fyll i yta, taxeringsvärde och ränteutgift för bostaden.');
+          showError('Fyll i yta, taxeringsvärde och ränteutgift för bostaden.', '#yta');
           return false;
         }
       }
@@ -221,13 +295,13 @@ function validateStep(stepIndex) {
     case 3: {
       const nettoinkomst = document.getElementById('nettoinkomst').value;
       if (!nettoinkomst) {
-        alert('Fyll i nettoinkomst per månad.');
+        showError('Fyll i nettoinkomst per månad.', '#nettoinkomst');
         return false;
       }
       if (civilStatus === 'gift') {
         const partnerNettoinkomst = document.getElementById('partnerNettoinkomst').value;
         if (!partnerNettoinkomst) {
-          alert('Fyll i partnerns nettoinkomst per månad.');
+          showError('Fyll i partnerns nettoinkomst per månad.', '#partnerNettoinkomst');
           return false;
         }
       }
@@ -236,18 +310,18 @@ function validateStep(stepIndex) {
     case 4: {
       const serviceBehovChecked = document.querySelector('input[name="servicebehov"]:checked');
       if (!serviceBehovChecked) {
-        alert('Välj typ av hjälp i hemmet.');
+        showError('Välj typ av hjälp i hemmet.', 'input[name="servicebehov"]');
         return false;
       }
       const matladaChecked = document.querySelector('input[name="matlåda"]:checked')?.value;
       if (!matladaChecked) {
-        alert('Välj om du vill ha matlåda.');
+        showError('Välj om du vill ha matlåda.', 'input[name="matlåda"]');
         return false;
       }
       if (matladaChecked === 'ja') {
         const antalMatlador = document.getElementById('AntalMatlådor').value;
         if (!antalMatlador) {
-          alert('Fyll i antal matlådor per vecka.');
+          showError('Fyll i antal matlådor per vecka.', '#AntalMatlådor');
           return false;
         }
       }
@@ -456,6 +530,8 @@ function calculateAvgift() {
   // Avrunda till heltal
   finalCost = Math.round(finalCost);
   const maxTaxableFeeRounded = Math.round(maxTaxableFee);
+  const now = new Date();
+  const dateString = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 
   // LOGGA ALLT
   console.log('--- BERÄKNING ---');
@@ -478,6 +554,7 @@ function calculateAvgift() {
   document.getElementById('paymentMargin').textContent = `${Math.round(disposableIncome)} kr`;
   document.getElementById('MatladaCosts').textContent = `${Math.round(matladaCost)} kr`;
   document.getElementById('MatladaCostsBreakdown').textContent = `${Math.round(matladaCost)} kr`;
+  document.getElementById('calculationTimestamp').textContent = `Beräkningen gjord: ${dateString}`;
 
   // Toggle form and results visibility
   document.getElementById('avgiftsFormular').style.display = 'none';
@@ -489,9 +566,22 @@ function calculateAvgift() {
 async function generatePDF() {
   try {
     const element = document.getElementById('resultsSection');
+    if (!element) {
+      alert('Kunde inte hitta resultatet att spara. Gör en beräkning först.');
+      return;
+    }
+    // Försök undvika CORS/taint-problem vid lokal körning
+    const logo = document.querySelector('.header img');
+    if (logo) {
+      logo.crossOrigin = 'anonymous';
+    }
+
     const canvas = await html2canvas(element, {
       scale: 2, // Bättre upplösning
       useCORS: true,
+      allowTaint: true,
+      imageTimeout: 0,
+      scrollY: -window.scrollY,
       logging: false
     });
     
@@ -512,7 +602,7 @@ async function generatePDF() {
     pdf.save('Avgiftsberakning-Vallentuna.pdf');
   } catch (error) {
     console.error('PDF generation error:', error);
-    alert('Ett fel uppstod vid skapande av PDF. Försök igen eller använd utskriftsfunktionen istället.');
+    alert('Ett fel uppstod vid skapande av PDF. Försök igen eller använd utskrift.');
   }
 }
 
@@ -526,7 +616,7 @@ function validateInput() {
   // Validera civilstånd
   const civilStatusChecked = document.querySelector('input[name="civilstand"]:checked');
   if (!civilStatusChecked) {
-    alert('Civilstånd är inte valt.');
+    showError('Välj civilstånd för att fortsätta.', 'input[name="civilstand"]');
     return false;
   }
   // Check if married and validate partner's age and income
@@ -534,45 +624,45 @@ function validateInput() {
   // Check if the age for partner is selected
   const partnerAgeSelected = document.querySelector('input[name="alder_partner"]:checked');
     if (!partnerAgeSelected) {
-      alert('Åldersgrupp för partner är inte vald.');
+      showError('Välj åldersgrupp för partner för att fortsätta.', 'input[name="alder_partner"]');
       return false;
     }
   // Check if partner's income is filled
   const partnerNetIncome = document.getElementById('partnerNettoinkomst').value;
     if (!partnerNetIncome) {
-      alert('Inkomstuppgifter för partner är inte ifyllda.');
+      showError('Fyll i partnerns nettoinkomst per månad.', '#partnerNettoinkomst');
       return false;
     }
   }
   // Validera ålder
   const ageChecked = document.querySelector('input[name="alder"]:checked');
     if (!ageChecked) {
-      alert('Åldersgrupp är inte vald.');
+      showError('Välj åldersgrupp för att fortsätta.', 'input[name="alder"]');
       return false;
     }
   // Check if boendeform is selected
   const boendeformChecked = document.querySelector('input[name="boendeform"]:checked');
     if (!boendeformChecked) {
-      alert('Boendeform är inte vald.');
+      showError('Välj boendeform för att fortsätta.', 'input[name="boendeform"]');
       return false;
     }
   // Check for 'hyres/bostadsrätt' specific fields
   if (boendeformChecked.value === 'hyres/bostadsratt') {
   const hyraPerManad = document.getElementById('hyraPerManad').value;
     if (!hyraPerManad) {
-      alert('Hyra/avgift per månad är inte ifylld.');
+      showError('Fyll i hyra/avgift per månad.', '#hyraPerManad');
       return false;
     }
   // Check if hushållsel choice is made
   const hushallselValue = document.querySelector('input[name="hushallsel"]:checked');
     if (!hushallselValue) {
-      alert('Vänligen ange om hushållsel ingår i hyran.');
+      showError('Ange om hushållsel ingår.', 'input[name="hushallsel"]');
       return false;
   }
     if (hushallselValue.value === 'nej') {
       const ytaForEl = document.getElementById('ytaForEl').value;
       if (!ytaForEl) {
-        alert('Yta i kvm för elberäkning är inte ifylld.');
+        showError('Fyll i yta i kvm för elberäkning.', '#ytaForEl');
         return false;
       }
     }
@@ -583,22 +673,26 @@ function validateInput() {
   const yta = document.getElementById('yta').value;
   const ranteutgiftPerAr = document.getElementById('ranteutgiftPerAr').value;
     if (!taxeringsvarde || !yta || !ranteutgiftPerAr) {
-      alert('Alla uppgifter för egen bostadsfastighet är inte ifyllda.');
+      showError('Fyll i yta, taxeringsvärde och ränteutgift för bostaden.', '#yta');
       return false;
     }
   }
   // Validera ekonomiinformation
   const nettoinkomst = document.getElementById('nettoinkomst').value;
   if (!nettoinkomst) {
-    alert('Nettoinkomst är inte korrekt ifylld.');
+    showError('Fyll i nettoinkomst per månad.', '#nettoinkomst');
     return false;
   }
     // Validering för matlåda
     const matladaChecked = document.querySelector('input[name="matlåda"]:checked')?.value;
+    if (!matladaChecked) {
+      showError('Välj om du vill ha matlåda.', 'input[name="matlåda"]');
+      return false;
+    }
     if (matladaChecked === 'ja') {
       const antalMatlador = document.getElementById('AntalMatlådor').value;
       if (!antalMatlador) {
-        alert('Du har valt att du vill ha matlåda, men inte angett hur många.');
+        showError('Fyll i antal matlådor per vecka.', '#AntalMatlådor');
         return false;
       }
     }
@@ -606,7 +700,7 @@ function validateInput() {
     // Kontrollera om någon servicetyp är vald
     const serviceBehovChecked = document.querySelector('input[name="servicebehov"]:checked');
     if (!serviceBehovChecked) {
-      alert('Vänligen välj typ av hjälp i hemmet.');
+      showError('Välj typ av hjälp i hemmet.', 'input[name="servicebehov"]');
       return false;
     }
     

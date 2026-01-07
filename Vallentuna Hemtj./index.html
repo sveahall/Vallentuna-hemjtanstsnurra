@@ -15,22 +15,14 @@
     <h2>Preliminär avgift för hemtjänst 2026</h2>
     <img src="VK-LOGO@2x.png" alt="Vallentuna kommun logotyp" />
   </div>
-
-  <div class="stepper">
-    <ol class="step-indicator">
-      <li class="active"><span class="step-number">1</span><span class="step-label">Civilstånd</span></li>
-      <li><span class="step-number">2</span><span class="step-label">Ålder</span></li>
-      <li><span class="step-number">3</span><span class="step-label">Boendeform</span></li>
-      <li><span class="step-number">4</span><span class="step-label">Ekonomi</span></li>
-      <li><span class="step-number">5</span><span class="step-label">Hjälp & mat</span></li>
-    </ol>
-  </div>
+  <p class="helper-text global-helper">Fält markerade med <span class="required-badge">*</span> är obligatoriska.</p>
+  <div id="formError" class="form-error" role="alert" aria-live="polite" style="display:none;"></div>
 
   <div class="form-step" data-step="0">
     <!-- Civilstånd -->
     <fieldset>
-      <legend>Civilstånd</legend>
-      <p class="helper-text">Vi behöver veta om du bor själv eller tillsammans med någon, eftersom avgiften kan delas när hushållet är två personer.</p>
+      <legend>Civilstånd <span class="required-badge">*</span></legend>
+      <p class="helper-text">Vi behöver veta om du bor själv eller tillsammans med någon, eftersom avgiften skiljer sig beroende på om du är ensamstående, sambo eller gift.</p>
       <div class="radio-group">
         <label for="civilstand_ensamstaende">
           <input type="radio" id="civilstand_ensamstaende" tabindex="1" name="civilstand" value="ensamstaende" onclick="updateFormFields();"> 
@@ -54,7 +46,7 @@
   <div class="form-step" data-step="1">
     <!-- Ålder -->
     <fieldset id="ageSection">
-      <legend>Ålder</legend>
+      <legend>Ålder <span class="required-badge">*</span></legend>
       <p class="helper-text">Ålder påverkar minimibeloppet (summan du får behålla för vardagliga utgifter) och hur avgiften beräknas.</p>
       <div class="radio-group">
         <label for="alder_under_65">
@@ -91,7 +83,7 @@
   <div class="form-step" data-step="2">
     <!-- Boendeform -->
     <fieldset id="bostadsFormular">
-      <legend>Boendeform</legend>
+      <legend>Boendeform <span class="required-badge">*</span></legend>
       <p class="helper-text">Bostadskostnader ingår i förbehållsbeloppet. Välj det som stämmer och fyll i hyra/avgift eller uppgifter för egen fastighet.</p>
       <div class="radio-group">
         <label for="boendeform_hyres">
@@ -177,9 +169,9 @@
   <div class="form-step" data-step="3">
     <!-- Ekonomiinformation -->
     <fieldset>
-      <legend>Ekonomiinformation</legend>
+      <legend>Ekonomiinformation <span class="required-badge">*</span></legend>
       <p class="helper-text">Ange inkomster efter skatt (per månad) och kapitalinkomster (per år). Uppgifterna behövs för att räkna avgiftsutrymmet.</p>
-      <label for="nettoinkomst">Nettoinkomst per månad:
+        <label for="nettoinkomst">Nettoinkomst per månad:
         <div class="info-container">
           <span class="info-icon" tabindex="0" aria-label="Information om nettoinkomst">i</span>
           <div class="info-text">Inkomst per månad efter skatt.</div>
@@ -231,15 +223,15 @@
   <div class="form-step" data-step="4">
     <!-- Servicebehov -->
     <fieldset style="border-bottom: none;">
-      <legend>Servicebehov</legend>
-      <p class="helper-text">Här väljer du hemtjänstnivå och om du vill ha trygghetslarm och matlådor. Hemtjänst och larm ingår i maxtaxan, matlådor gör det inte.</p>
+      <legend>Servicebehov <span class="required-badge">*</span></legend>
+      <p class="helper-text">Här väljer du hemtjänstnivå och om du vill ha trygghetslarm och matlådor. Hemtjänst och larm ingår i maxtaxan, matlådor gör inte det.</p>
       <div class="info-line">
-        <label for="trygghetslarm">Vill du ha trygghetslarm?
+        <span class="question-label">Vill du ha trygghetslarm?
           <div class="info-container">
             <span class="info-icon" tabindex="0" aria-label="Information om trygghetslarm">i</span>
             <div class="info-text">Med trygghetslarm kan du larma om hjälp när som helst på dygnet om något händer. Ingår i maxtaxan.</div>
           </div>
-        </label>
+        </span>
       </div>
       
       <div class="checkbox-container">
@@ -247,7 +239,7 @@
         <label for="trygghetslarm">Ja, jag vill ha trygghetslarm.</label>
       </div>
 
-      <legend style="margin-top: 25px;">Hjälp i hemmet</legend>
+      <legend style="margin-top: 25px;">Hjälp i hemmet <span class="required-badge">*</span></legend>
       <div class="radio-group service-options">
         <div class="info-line">
           <label for="servicemax2h">
@@ -284,7 +276,7 @@
       </div>
 
       <div style="margin-top: 25px;">
-        <label>Vill du ha matlåda?</label>
+        <label>Vill du ha matlåda? <span class="required-badge">*</span></label>
         <div class="radio-group">
           <label for="matlådaJa">
             <input type="radio" tabindex="28" id="matlådaJa" name="matlåda" value="ja">
@@ -303,6 +295,7 @@
             <span class="info-icon" tabindex="0" aria-label="Information om matlådor">i</span>
             <div class="info-text">Matlådor ingår ej i maxtaxa. Däremot ingår matlådornas leverans i maxtaxan.</div>
           </div>
+          <span class="required-badge">*</span>
           <input type="number" tabindex="30" id="AntalMatlådor" placeholder="0" min="0" max="21">
         </label>
       </div>
@@ -326,18 +319,20 @@
 
   <div class="result-summary">
     <p class="summary-label">Totalt att betala per månad</p>
-    <p id="totalMonthlyCost" class="summary-amount">0 kr</p>
+    <p id="totalMonthlyCost" class="summary-amount" role="status" aria-live="polite">0 kr</p>
     <div class="summary-breakdown">
       <div class="summary-row">
         <span>Avgift inom maxtaxa</span>
-        <strong id="maxTaxaCost">0 kr</strong>
+        <strong id="maxTaxaCost" role="status" aria-live="polite">0 kr</strong>
       </div>
       <div class="summary-row">
         <span>Matlådor (utanför maxtaxa)</span>
-        <strong id="MatladaCostsBreakdown">0 kr</strong>
+        <strong id="MatladaCostsBreakdown" role="status" aria-live="polite">0 kr</strong>
       </div>
     </div>
     <p class="summary-note">Avgift inom maxtaxa (hemtjänst, trygghetslarm, leverans) + matlådor = din totala kostnad. Beräkningen använder 2026 års prisbasbelopp (59 200 kr) och maxtaxa (2 660 kr).</p>
+    <p class="summary-note" id="calculationTimestamp">Beräkningen gjord: -</p>
+    <p class="summary-note">För frågor om avgiften, kontakta Vallentuna kommuns omsorg: 08-587 850 00 eller se vallentuna.se/hemtjanst.</p>
   </div>
 
   <h3>Dina beräkningsfaktorer</h3>
@@ -351,16 +346,18 @@
   <div class="buttons">
     <button style="width: 50%; font-weight: 500;" id="backButton" tabindex="0">< Tillbaka</button>
     <div class="savePrintButtons">
-      <svg id="printButton" tabindex="0" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.88 114.81" aria-label="Skriv ut beräkning">
-        <title>Skriv ut beräkning</title>
-        <path d="M18.46,89.86H7.82A7.8,7.8,0,0,1,2.3,87.57l-.24-.26A7.82,7.82,0,0,1,0,82V35.44a7.81,7.81,0,0,1,2.3-5.53l.25-.23a7.77,7.77,0,0,1,5.27-2.06H20.13A8.07,8.07,0,0,1,20,26.14v-18a8.05,8.05,0,0,1,2.39-5.72h0A8.07,8.07,0,0,1,28.1,0H94.78a8.13,8.13,0,0,1,8.11,8.11v18a8.07,8.07,0,0,1-.14,1.48h12.31a7.81,7.81,0,0,1,5.51,2.29h0a7.8,7.8,0,0,1,2.3,5.52V82a7.84,7.84,0,0,1-7.82,7.82H104.42v20.31a4.63,4.63,0,0,1-1.36,3.28,4.32,4.32,0,0,1-.39.34,4.6,4.6,0,0,1-2.89,1H23.1a4.63,4.63,0,0,1-3.28-1.36,3.06,3.06,0,0,1-.34-.39,4.6,4.6,0,0,1-1-2.89V89.86ZM27,27.62H95.91l.19-.17a1.86,1.86,0,0,0,.55-1.31v-18a1.88,1.88,0,0,0-1.87-1.87H28.1a1.87,1.87,0,0,0-1.32.55h0a1.87,1.87,0,0,0-.54,1.32v18a1.84,1.84,0,0,0,.55,1.31l.19.17Zm9.3,71.71a2.4,2.4,0,0,1,0-4.8H63.64a2.4,2.4,0,0,1,0,4.8Zm0-14.56a2.4,2.4,0,0,1,0-4.8H86.61a2.4,2.4,0,0,1,0,4.8ZM7.07,60.61H115.81V35.44a.76.76,0,0,0-.22-.54.77.77,0,0,0-.53-.22H7.82a.76.76,0,0,0-.46.16l-.07.07a.76.76,0,0,0-.22.53V60.61Zm108.74,7.07H102.19a4.13,4.13,0,0,1,.87.69,4.63,4.63,0,0,1,1.36,3.28V82.79h10.64a.75.75,0,0,0,.53-.22.79.79,0,0,0,.22-.53V67.68Zm-95.12,0H7.07V82a.81.81,0,0,0,.15.46l.07.07a.75.75,0,0,0,.53.22H18.46V71.65a4.63,4.63,0,0,1,1.36-3.28,4.13,4.13,0,0,1,.87-.69Zm76.67,4.23H25.52v35.83H97.36V71.91Z"/>
-      </svg>
-      <svg id="saveButton" tabindex="0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 424 511.54" aria-label="Spara beräkning som PDF">
-        <title>Spara beräkning som PDF</title>
-        <path fill="#262626" fill-rule="nonzero" d="M86.37 413.44c-11.76 0-11.76-17.89 0-17.89H189.1c-.2 2.95-.31 5.93-.31 8.94s.11 5.99.31 8.95H86.37zm35.31-167.09H104.5v19.96H78.08v-82.59h41.62c18.94 0 28.41 10.17 28.41 30.52 0 11.19-2.47 19.47-7.4 24.84-1.85 2.03-4.41 3.75-7.66 5.16-3.26 1.41-7.05 2.11-11.37 2.11zm-17.18-41.49v20.35h6.08c3.17 0 5.49-.33 6.94-.99 1.45-.66 2.18-2.18 2.18-4.56v-9.25c0-2.38-.73-3.9-2.18-4.56-1.45-.66-3.77-.99-6.94-.99h-6.08zm53.52 61.45v-82.59h37c14.89 0 25.11 3.17 30.66 9.51 5.55 6.34 8.32 16.94 8.32 31.78 0 14.85-2.77 25.44-8.32 31.78-5.55 6.34-15.77 9.52-30.66 9.52h-37zm37.4-61.45h-10.97v40.3h10.97c3.61 0 6.23-.41 7.86-1.25 1.63-.84 2.44-2.75 2.44-5.75v-26.3c0-2.99-.81-4.91-2.44-5.74-1.63-.84-4.25-1.26-7.86-1.26zm98.71 30.79h-22.47v30.66h-26.43v-82.59h54.18l-3.3 21.14h-24.45v11.1h22.47v19.69zM265.81 24.26v29.1c0 65.66 15.31 69.47 69.08 69.47h22.03l-91.11-98.57zm94.33 115.92h-21.48c-61.02 0-90.2-4.09-90.2-86.28V17.35H56.82c-21.7 0-39.47 17.78-39.47 39.47v264.79H219.2c-4.64 5.47-8.83 11.34-12.51 17.54H17.35v89.83c0 21.62 17.85 39.47 39.47 39.47h149.04c3.53 6.12 7.56 11.92 12.02 17.34H56.82C25.63 485.79 0 460.17 0 428.98V56.82C0 25.55 25.55 0 56.82 0h206.33a8.68 8.68 0,0,1,6.93 3.45l105.07 113.68c2.19 2.37 2.34 4.66 2.34 7.52v166.86c-5.55-2.98-11.35-5.56-17.35-7.71V140.18z"/>
-        <path fill="red" d="M316.95 297.45c59.12 0 107.05 47.93 107.05 107.05 0 59.11-47.93 107.04-107.05 107.04S209.9 463.61 209.9 404.5c0-59.12 47.93-107.05 107.05-107.05z"/>
-        <path fill="#fff" fill-rule="nonzero" d="M337.9 356.54l-3.77 47.75 17.35-6.07c11.47-4.4 23.27 3.72 14.38 13.82-10.82 12.45-27.26 29.55-39.22 40.94-7.43 7.42-11.73 7.49-19.18.06-13.24-13-26.24-27.44-39.18-40.87-9.25-10.06 2.3-18.55 14.28-13.95l17.16 6.01c-1.25-16.28-2.82-31.84-3.77-48.1 0-2.99 2.5-5.39 5.42-5.61 10.31 0 20.84-.24 31.12 0 2.92.22 5.42 2.62 5.42 5.61l-.01.41z"/>
-      </svg>
+      <button type="button" id="printButton" class="icon-button" aria-label="Skriv ut beräkning">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.88 114.81" aria-hidden="true">
+          <path d="M18.46,89.86H7.82A7.8,7.8,0,0,1,2.3,87.57l-.24-.26A7.82,7.82,0,0,1,0,82V35.44a7.81,7.81,0,0,1,2.3-5.53l.25-.23a7.77,7.77,0,0,1,5.27-2.06H20.13A8.07,8.07,0,0,1,20,26.14v-18a8.05,8.05,0,0,1,2.39-5.72h0A8.07,8.07,0,0,1,28.1,0H94.78a8.13,8.13,0,0,1,8.11,8.11v18a8.07,8.07,0,0,1-.14,1.48h12.31a7.81,7.81,0,0,1,5.51,2.29h0a7.8,7.8,0,0,1,2.3,5.52V82a7.84,7.84,0,0,1-7.82,7.82H104.42v20.31a4.63,4.63,0,0,1-1.36,3.28,4.32,4.32,0,0,1-.39.34,4.6,4.6,0,0,1-2.89,1H23.1a4.63,4.63,0,0,1-3.28-1.36,3.06,3.06,0,0,1-.34-.39,4.6,4.6,0,0,1-1-2.89V89.86ZM27,27.62H95.91l.19-.17a1.86,1.86,0,0,0,.55-1.31v-18a1.88,1.88,0,0,0-1.87-1.87H28.1a1.87,1.87,0,0,0-1.32.55h0a1.87,1.87,0,0,0-.54,1.32v18a1.84,1.84,0,0,0,.55,1.31l.19.17Zm9.3,71.71a2.4,2.4,0,0,1,0-4.8H63.64a2.4,2.4,0,0,1,0,4.8Zm0-14.56a2.4,2.4,0,0,1,0-4.8H86.61a2.4,2.4,0,0,1,0,4.8ZM7.07,60.61H115.81V35.44a.76.76,0,0,0-.22-.54.77.77,0,0,0-.53-.22H7.82a.76.76,0,0,0-.46.16l-.07.07a.76.76,0,0,0-.22.53V60.61Zm108.74,7.07H102.19a4.13,4.13,0,0,1,.87.69,4.63,4.63,0,0,1,1.36,3.28V82.79h10.64a.75.75,0,0,0,.53-.22.79.79,0,0,0,.22-.53V67.68Zm-95.12,0H7.07V82a.81.81,0,0,0,.15.46l.07.07a.75.75,0,0,0,.53.22H18.46V71.65a4.63,4.63,0,0,1,1.36-3.28,4.13,4.13,0,0,1,.87-.69Zm76.67,4.23H25.52v35.83H97.36V71.91Z"/>
+        </svg>
+      </button>
+      <button type="button" id="saveButton" class="icon-button" aria-label="Spara beräkning som PDF">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 424 511.54" aria-hidden="true">
+          <path fill="#262626" fill-rule="nonzero" d="M86.37 413.44c-11.76 0-11.76-17.89 0-17.89H189.1c-.2 2.95-.31 5.93-.31 8.94s.11 5.99.31 8.95H86.37zm35.31-167.09H104.5v19.96H78.08v-82.59h41.62c18.94 0 28.41 10.17 28.41 30.52 0 11.19-2.47 19.47-7.4 24.84-1.85 2.03-4.41 3.75-7.66 5.16-3.26 1.41-7.05 2.11-11.37 2.11zm-17.18-41.49v20.35h6.08c3.17 0 5.49-.33 6.94-.99 1.45-.66 2.18-2.18 2.18-4.56v-9.25c0-2.38-.73-3.9-2.18-4.56-1.45-.66-3.77-.99-6.94-.99h-6.08zm53.52 61.45v-82.59h37c14.89 0 25.11 3.17 30.66 9.51 5.55 6.34 8.32 16.94 8.32 31.78 0 14.85-2.77 25.44-8.32 31.78-5.55 6.34-15.77 9.52-30.66 9.52h-37zm37.4-61.45h-10.97v40.3h10.97c3.61 0 6.23-.41 7.86-1.25 1.63-.84 2.44-2.75 2.44-5.75v-26.3c0-2.99-.81-4.91-2.44-5.74-1.63-.84-4.25-1.26-7.86-1.26zm98.71 30.79h-22.47v30.66h-26.43v-82.59h54.18l-3.3 21.14h-24.45v11.1h22.47v19.69zM265.81 24.26v29.1c0 65.66 15.31 69.47 69.08 69.47h22.03l-91.11-98.57zm94.33 115.92h-21.48c-61.02 0-90.2-4.09-90.2-86.28V17.35H56.82c-21.7 0-39.47 17.78-39.47 39.47v264.79H219.2c-4.64 5.47-8.83 11.34-12.51 17.54H17.35v89.83c0 21.62 17.85 39.47 39.47 39.47h149.04c3.53 6.12 7.56 11.92 12.02 17.34H56.82C25.63 485.79 0 460.17 0 428.98V56.82C0 25.55 25.55 0 56.82 0h206.33a8.68 8.68 0,0,1,6.93 3.45l105.07 113.68c2.19 2.37 2.34 4.66 2.34 7.52v166.86c-5.55-2.98-11.35-5.56-17.35-7.71V140.18z"/>
+          <path fill="red" d="M316.95 297.45c59.12 0 107.05 47.93 107.05 107.05 0 59.11-47.93 107.04-107.05 107.04S209.9 463.61 209.9 404.5c0-59.12 47.93-107.05 107.05-107.05z"/>
+          <path fill="#fff" fill-rule="nonzero" d="M337.9 356.54l-3.77 47.75 17.35-6.07c11.47-4.4 23.27 3.72 14.38 13.82-10.82 12.45-27.26 29.55-39.22 40.94-7.43 7.42-11.73 7.49-19.18.06-13.24-13-26.24-27.44-39.18-40.87-9.25-10.06 2.3-18.55 14.28-13.95l17.16 6.01c-1.25-16.28-2.82-31.84-3.77-48.1 0-2.99 2.5-5.39 5.42-5.61 10.31 0 20.84-.24 31.12 0 2.92.22 5.42 2.62 5.42 5.61l-.01.41z"/>
+        </svg>
+      </button>
     </div>
   </div>
 </div>
